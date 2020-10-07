@@ -1,13 +1,13 @@
 from typing import Any
 
-from flask import Flask, jsonify
+from flask import Flask, request, json
 
 app = Flask(__name__)
 
 
 @app.route('/')
 def hello_world():
-    return jsonify({
+    return json.jsonify({
         "Get article details": "GET /post/:post_id",
         "Get all article details": "GET /post",
         "Get all article details of a user": "GET /posts/author/:userID",
@@ -34,7 +34,8 @@ def get_all_post_of_author(user_id: str):
 
 @app.route('/post', methods=['PUT'])
 def create_post():
-    return 'Creat a article'
+    json_body = request.get_json()
+    return json_body if json_body is not None else {}
 
 
 @app.route('/post/<post_id>', methods=['DELETE'])
