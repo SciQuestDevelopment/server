@@ -1,5 +1,3 @@
-from typing import Any
-
 from flask import Flask, request, json
 
 app = Flask(__name__)
