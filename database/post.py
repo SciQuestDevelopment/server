@@ -5,9 +5,7 @@ from typing import Any, Optional
 
 class Post(object):
 
-    __CLASS_METHOD_REGEX = r'^(?:(?P<class_name>.*)::)?(?P<method_name>\w+(?:<.*>)?\(.*\))$'
-
-    def __init__(self, handler_factory: TableHandlerFactory):
+    def __init__(self, handler_factory):
         self.__table_handler = handler_factory
 
     def is_record_before(self, commit_hash: str) -> bool:
