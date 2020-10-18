@@ -11,7 +11,7 @@ __pycache__/
 .idea/**/usage.statistics.xml
 .idea/**/dictionaries
 .idea/**/shelf
-
+db.yaml
 # Generated files
 .idea/**/contentModel.xml
 
@@ -212,3 +212,4 @@ dmypy.json
 
 # Cython debug symbols
 cython_debug/
+/db.yaml
