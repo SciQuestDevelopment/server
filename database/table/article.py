@@ -61,3 +61,4 @@ class ArticleTable(AbsTableHandler):
 
     def __init__(self, connection: Connection):
         super().__init__(connection, ArticleStmts())
+
