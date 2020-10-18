@@ -1,5 +1,0 @@
-mysql_host:'sh-cynosdbmysql-grp-3uohx78w.sql.tencentcdb.com'
-mysql_port:'26074'
-mysql_user:'root'
-mysql_password:'Sciquest12345'
-mysql_db:'post'
