@@ -1,3 +1,5 @@
+from typing import Dict, Any, List, Optional
+
 from pymysql import Connection
 
 from database.table.abs_table import AbsTableHandler, AbsSqlStmtHolder
@@ -23,37 +25,31 @@ class ArticleStmts(AbsSqlStmtHolder):
     """
 
     @property
-    def insert(self) -> str: return """
-        INSERT INTO post.Article(doi, url, title, venue, summary, content, publish_date) 
-        VALUES (:doi, :url, :title, :venue, :summary, :content, :publish_date)
+    def select_meta_by_pk(self) -> str: return """
+        SELECT doi, url, title, venue, summary, publish_date 
+        FROM post.Article
+        WHERE id=%(post_id)s
     """
 
     @property
-    def delete_by_pk(self) -> str: return """
-        DELETE FROM post.Article 
-        WHERE id=:id
+    def select_content_by_pk(self) -> str: return """
+        SELECT content
+        FROM post.Article
+        WHERE id=%(post_id)s
     """
 
     @property
-    def update_by_pk(self) -> str: return """
-        UPDATE 
-            post.Article 
-        SET    
-            doi=:doi, 
-            url=:url, 
-            title=:title, 
-            venue=:venue, 
-            summary=:summary, 
-            content=:content, 
-            publish_date=:publish_date 
-        WHERE 
-            id=:id
+    def select_meta_n_rows_with_offset(self) -> str: return """
+        SELECT doi, url, title, venue, summary, publish_date
+        FROM post.Article
+        ORDER BY id
+        LIMIT %(offset_num)s, %(query_num)s
     """
 
     @property
-    def select_by_pk(self) -> str: return """
-        SELECT * FROM post.Article
-        WHERE id=:id
+    def select_all_meta(self) -> str: return """
+        SELECT doi, url, title, venue, summary, publish_date
+        FROM post.Article
     """
 
 
@@ -62,3 +58,43 @@ class ArticleTable(AbsTableHandler):
     def __init__(self, connection: Connection):
         super().__init__(connection, ArticleStmts())
 
+    @property
+    def _stmts_holder(self) -> ArticleStmts:
+        holder = super(ArticleTable, self)._stmts_holder
+        if not isinstance(holder, ArticleStmts): raise TypeError("IMPOSSIBLE")
+        return holder
+
+    def __select_by_id(self, slc_stmts: str, post_id: int) -> Dict[str, Any]:
+        output = dict()
+        with self._db_connection.cursor() as cursor:
+            cursor.execute(slc_stmts, {'post_id': post_id})
+            result = cursor.fetchone()
+            output.update(result)
+        return output
+
+    def select_meta(self, post_id: int) -> Dict[str, Any]:
+        select_meta_sql = self._stmts_holder.select_meta_by_pk
+        return self.__select_by_id(select_meta_sql, post_id)
+
+    def select_content(self, post_id: int) -> Any:
+        select_meta_sql = self._stmts_holder.select_content_by_pk
+        return self.__select_by_id(select_meta_sql, post_id).get('content', None)
+
+    def __select_multi_row(self, slc_stmts: str, pars: Optional[Dict] = None) -> List[Dict[str, Any]]:
+        output = list()
+        with self._db_connection.cursor() as cursor:
+            cursor.execute(slc_stmts, pars)
+            result = cursor.fetchall()
+            output.extend(result)
+        return output
+
+    def select_multi_meta(self, query_num: int, offset_num: int = 0) -> List[Dict[str, Any]]:
+        sql_stmts = self._stmts_holder.select_meta_n_rows_with_offset
+        sql_pars = {'query_num': query_num, 'offset_num': offset_num}
+        return self.__select_multi_row(sql_stmts, sql_pars)
+
+    # The method should not be used in the real project.
+    # Use the `select_multi_meta` to replace when needed.
+    def select_all_meta(self) -> List[Dict[str, Any]]:
+        sql_stmts = self._stmts_holder.select_all_meta
+        return self.__select_multi_row(sql_stmts)
