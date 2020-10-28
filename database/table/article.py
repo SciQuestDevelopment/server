@@ -40,7 +40,7 @@ class ArticleStmts(AbsSqlStmtHolder):
 
     @property
     def select_meta_n_rows_with_offset(self) -> str: return """
-        SELECT doi, url, title, venue, summary, publish_date
+        SELECT id, doi, url, title, venue, summary, publish_date
         FROM post.Article
         ORDER BY id
         LIMIT %(offset_num)s, %(query_num)s
@@ -48,7 +48,7 @@ class ArticleStmts(AbsSqlStmtHolder):
 
     @property
     def select_all_meta(self) -> str: return """
-        SELECT doi, url, title, venue, summary, publish_date
+        SELECT id, doi, url, title, venue, summary, publish_date
         FROM post.Article
     """
 
