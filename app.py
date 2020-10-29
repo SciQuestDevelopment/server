@@ -1,6 +1,6 @@
 import io
-import logging
 import os
+import logging
 
 from flask import Flask, request, json, send_file
 
@@ -33,29 +33,36 @@ def get_all_apis():
 @app.route('/posts/meta/one', methods=['GET'])
 def get_post_meta():
     if 'id' not in request.args:
-        return 'WARNING: INVALID SYNTAX (NO ARGUMENT ID)', 404
-    post_id = request.args.get('id')
-    result = table_builder.article.select_meta(post_id)
-    return json.jsonify(result)
+        rlt_msg = {'TYPE': 'SYNTAX', 'MSG': 'NO QUERY_NUM'}
+        rlt_code = 404
+    else:
+        post_id = request.args.get('id')
+        rlt_msg = table_builder.article.select_meta(post_id)
+        rlt_code = 200
+    return json.jsonify(rlt_msg), rlt_code
 
 
 @app.route('/posts/meta/range', methods=['GET'])
 def get_multi_posts_meta():
-    if 'query_num' not in request.args:
-        return 'WARNING: INVALID SYNTAX (NO QUERY NUM)', 404
     try:
-        query_num = int(request.args.get('query_num'))
-        offset_num = int(request.args.get('offset_num', 0))
-        result = table_builder.article.select_multi_meta(query_num, offset_num)
-        return json.jsonify(result)
+        if 'query_num' not in request.args:
+            rlt_msg = {'TYPE': 'SYNTAX', 'MSG': 'NO QUERY_NUM'}
+            rlt_code = 404
+        else:
+            query_num = int(request.args.get('query_num'))
+            offset_num = int(request.args.get('offset_num', 0))
+            rlt_msg = table_builder.article.select_multi_meta(query_num, offset_num)
+            rlt_code = 200
     except TypeError as e:
-        return 'WARNING: INVALID SYNTAX (INVALID NUMBER)', 404
+        rlt_msg = {'TYPE': 'SYNTAX', 'MSG': 'INVALID QUERY_NUM'}
+        rlt_code = 404
+    return json.jsonify(rlt_msg), rlt_code
 
 
 @app.route('/posts/meta/all', methods=['GET'])
 def get_all_posts_meta():
     result = table_builder.article.select_all_meta()
-    return json.jsonify(result)
+    return json.jsonify(result), 200
 
 
 @app.route('/posts/content', methods=['GET'])
