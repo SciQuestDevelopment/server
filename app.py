@@ -65,6 +65,18 @@ def get_all_posts_meta():
     return json.jsonify(result), 200
 
 
+@app.route('/posts/meta/specific/title', methods=['GET'])
+def get_post_meta_by_title():
+    if 'value' not in request.args:
+        rlt_msg = {'TYPE': 'SYNTAX', 'MSG': 'NO VALUE'}
+        rlt_code = 404
+    else:
+        post_title = request.args.get('value')
+        rlt_msg = table_builder.article.select_meta(post_title)
+        rlt_code = 200
+    return json.jsonify(rlt_msg), rlt_code
+
+
 @app.route('/posts/content', methods=['GET'])
 def get_post_content():
     if 'id' not in request.args:
