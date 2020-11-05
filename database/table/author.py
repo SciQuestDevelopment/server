@@ -14,25 +14,6 @@ class AuthorStmts(AbsSqlStmtHolder):
     """
 
     @property
-    def insert(self) -> str: return """
-        INSERT INTO post.Author(name) 
-        VALUES (:name)
-    """
-
-    @property
-    def delete_by_pk(self) -> str: return """
-        DELETE FROM post.Author 
-        WHERE id=:id
-    """
-
-    @property
-    def update_by_pk(self) -> str: return """
-        UPDATE post.Author 
-        SET name=:name
-        WHERE id=:id
-    """
-
-    @property
     def select_by_pk(self) -> str: return """
         SELECT * FROM post.Author
         WHERE id=:id
@@ -43,4 +24,11 @@ class AuthorTable(AbsTableHandler):
 
     def __init__(self, connection: Connection):
         super().__init__(connection, AuthorStmts())
+
+    @property
+    def _stmts_holder(self) -> AuthorStmts:
+        holder = super(AuthorTable, self)._stmts_holder
+        if not isinstance(holder, AuthorStmts): raise TypeError("IMPOSSIBLE")
+        return holder
+
 

@@ -26,9 +26,9 @@ class ArticleStmts(AbsSqlStmtHolder):
 
     @property
     def select_meta_by_pk(self) -> str: return """
-        SELECT doi, url, title, venue, summary, publish_date 
+        SELECT id, doi, url, title, venue, summary, publish_date
         FROM post.Article
-        WHERE id=%(post_id)s
+        WHERE id=%(post_id)s 
     """
 
     @property
@@ -50,6 +50,34 @@ class ArticleStmts(AbsSqlStmtHolder):
     def select_all_meta(self) -> str: return """
         SELECT id, doi, url, title, venue, summary, publish_date
         FROM post.Article
+    """
+
+    @property
+    def select_multi_meta_with_title_at_venue_in_year(self) -> str: return """
+        SELECT id, doi, url, title, venue, summary, publish_date
+        FROM post.Article
+        WHERE title LIKE %(title_pattern)s
+            AND venue = %(venue_name)s
+            AND publish_date BETWEEN %(start_year)s AND %(end_year)s
+    """
+
+    @property
+    def select_multi_meta_with_sublabel_at_venue_in_year(self) -> str: return """
+        WITH sublabel_id(
+            SELECT 
+        ),
+        SELECT id, doi, url, title, venue, summary, publish_date
+        FROM post.Article
+        WHERE title LIKE %(title_pattern)s
+            AND venue = %(venue_name)s
+            AND publish_date BETWEEN %(start_year)s AND %(end_year)s
+    """
+
+    @property
+    def select_multi_meta_of_venue(self) -> str: return """
+        SELECT id, doi, url, title, venue, summary, publish_date
+        FROM post.Article
+        WHERE venue = %(venue_name)s
     """
 
 
