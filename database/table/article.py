@@ -25,6 +25,21 @@ class ArticleStmts(AbsSqlStmtHolder):
     """
 
     @property
+    def create_db_for_relation(self) -> str: return """
+        CREATE TABLE IF NOT EXISTS post.Relation_Article_Author (
+            id INTEGER auto_increment PRIMARY KEY,
+            article_id INTEGER NOT NULL,
+            author_id  INTEGER NOT NULL,
+            CONSTRAINT Author_id_fk
+                FOREIGN KEY (author_id) REFERENCES Author (id)
+                    ON DELETE CASCADE,
+            CONSTRAINT Article_id_fk
+                FOREIGN KEY (article_id) REFERENCES Article (id)
+                    ON DELETE CASCADE
+        );
+    """
+
+    @property
     def select_meta_by_pk(self) -> str: return """
         SELECT id, doi, url, title, venue, summary, publish_date
         FROM post.Article
@@ -52,32 +67,11 @@ class ArticleStmts(AbsSqlStmtHolder):
         FROM post.Article
     """
 
-    @property
-    def select_multi_meta_with_title_at_venue_in_year(self) -> str: return """
-        SELECT id, doi, url, title, venue, summary, publish_date
-        FROM post.Article
-        WHERE title LIKE %(title_pattern)s
-            AND venue = %(venue_name)s
-            AND publish_date BETWEEN %(start_year)s AND %(end_year)s
-    """
 
     @property
-    def select_multi_meta_with_sublabel_at_venue_in_year(self) -> str: return """
-        WITH sublabel_id(
-            SELECT 
-        ),
-        SELECT id, doi, url, title, venue, summary, publish_date
-        FROM post.Article
-        WHERE title LIKE %(title_pattern)s
-            AND venue = %(venue_name)s
-            AND publish_date BETWEEN %(start_year)s AND %(end_year)s
-    """
-
-    @property
-    def select_multi_meta_of_venue(self) -> str: return """
-        SELECT id, doi, url, title, venue, summary, publish_date
-        FROM post.Article
-        WHERE venue = %(venue_name)s
+    def select_all_ids_by_author_id(self) -> str: return """
+        SELECT * FROM post.Relation_Article_Author
+        WHERE author_id=%(author_id)s
     """
 
 
@@ -126,3 +120,10 @@ class ArticleTable(AbsTableHandler):
     def select_all_meta(self) -> List[Dict[str, Any]]:
         sql_stmts = self._stmts_holder.select_all_meta
         return self.__select_multi_row(sql_stmts)
+
+    def select_ids_belong_author(self, author_id: int) -> List[int]:
+        output = list()
+        with self._db_connection.cursor() as cursor:
+            cursor.execute(self._stmts_holder.select_all_ids_by_author_id, {'author_id': author_id})
+            for row in cursor.fetchall(): output.append(row['article_id'])
+        return output

@@ -38,6 +38,7 @@ def get_post_meta():
     else:
         post_id = request.args.get('id')
         rlt_msg = table_builder.article.select_meta(post_id)
+        rlt_msg['authors_list'] = table_builder.author.select_ids_of_article(post_id)
         rlt_code = 200
     return json.jsonify(rlt_msg), rlt_code
 
@@ -51,7 +52,11 @@ def get_multi_posts_meta():
         else:
             query_num = int(request.args.get('query_num'))
             offset_num = int(request.args.get('offset_num', 0))
-            rlt_msg = table_builder.article.select_multi_meta(query_num, offset_num)
+            main_metas = table_builder.article.select_multi_meta(query_num, offset_num)
+            rlt_msg = list()
+            for each_article in main_metas:
+                each_article['authors_list'] = table_builder.author.select_ids_from_author(each_article['id'])
+                rlt_msg.append(each_article)
             rlt_code = 200
     except TypeError as e:
         rlt_msg = {'TYPE': 'SYNTAX', 'MSG': 'INVALID QUERY_NUM'}
@@ -61,20 +66,12 @@ def get_multi_posts_meta():
 
 @app.route('/posts/meta/all', methods=['GET'])
 def get_all_posts_meta():
-    result = table_builder.article.select_all_meta()
-    return json.jsonify(result), 200
-
-
-@app.route('/posts/meta/specific/title', methods=['GET'])
-def get_post_meta_by_title():
-    if 'value' not in request.args:
-        rlt_msg = {'TYPE': 'SYNTAX', 'MSG': 'NO VALUE'}
-        rlt_code = 404
-    else:
-        post_title = request.args.get('value')
-        rlt_msg = table_builder.article.select_meta(post_title)
-        rlt_code = 200
-    return json.jsonify(rlt_msg), rlt_code
+    main_metas = table_builder.article.select_all_meta()
+    rlt_msg = list()
+    for each_article in main_metas:
+        each_article['authors_list'] = table_builder.author.select_ids_from_author(each_article['id'])
+        rlt_msg.append(each_article)
+    return json.jsonify(rlt_msg), 200
 
 
 @app.route('/posts/content', methods=['GET'])

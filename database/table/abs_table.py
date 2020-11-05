@@ -1,6 +1,6 @@
 import abc
 from pymysql import Connection
-from typing import Any, Dict
+from typing import Any
 
 
 class AbsSqlStmtHolder(object):
