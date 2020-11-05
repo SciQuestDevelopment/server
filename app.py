@@ -88,5 +88,29 @@ def get_post_content():
     )
 
 
+@app.route('/authors/meta', methods=['GET'])
+def get_author_meta():
+    if 'id' not in request.args:
+        rlt_msg = {'TYPE': 'SYNTAX', 'MSG': 'NO AUTHOR_ID'}
+        rlt_code = 404
+    else:
+        author_id = request.args.get('id')
+        rlt_msg = table_builder.author.select_author_meta(author_id)
+        rlt_code = 200
+    return json.jsonify(rlt_msg), rlt_code
+
+
+@app.route('/authors/all_publishes', methods=['GET'])
+def get_author_all_publishes():
+    if 'id' not in request.args:
+        rlt_msg = {'TYPE': 'SYNTAX', 'MSG': 'NO AUTHOR_ID'}
+        rlt_code = 404
+    else:
+        author_id = request.args.get('id')
+        rlt_msg = table_builder.article.select_ids_belong_author(author_id)
+        rlt_code = 200
+    return json.jsonify(rlt_msg), rlt_code
+
+
 if __name__ == '__main__':
     app.run()

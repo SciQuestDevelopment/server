@@ -54,7 +54,7 @@ class AuthorTable(AbsTableHandler):
         if not isinstance(holder, AuthorStmts): raise TypeError("IMPOSSIBLE")
         return holder
 
-    def select_author_names(self, author_id)-> Dict[str, Any]:
+    def select_author_meta(self, author_id)-> Dict[str, Any]:
         output = dict()
         with self._db_connection.cursor() as cursor:
             cursor.execute(self._stmts_holder.select_by_pk, {'author_id': author_id})
