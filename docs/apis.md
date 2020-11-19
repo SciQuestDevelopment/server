@@ -2,13 +2,15 @@
 
 #### 1. Overall
 
-当前服务器仅针对Article提供三个不同的接口, 
+当前服务器仅针对Article提供五个不同的接口, 
 ```
 {
     "Get meta data of a single article ": "GET /posts/meta/one?id=:post_id",
     "Get meta data of all articles": "GET /posts/meta/all",
     "Get meta data of multiple articles": "GET /posts/meta/range?query_num=:query_num&offset_num=:offset_num",
     "Get article content": "GET /posts/content?id=:post_id",
+    "获取某作者的详细信息": "GET /author/meta?id=:author_id",
+    "获取某作者的所有文章id": "GET /author/all_publishes?id=:author_id" 
 }
 ```
 

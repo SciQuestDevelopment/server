@@ -1,8 +1,7 @@
 from typing import Dict, Any, List, Optional
 
 from pymysql import Connection
-
-from database.table.abs_table import AbsTableHandler, AbsSqlStmtHolder
+from .abs_table import AbsTableHandler, AbsSqlStmtHolder
 
 
 class ArticleStmts(AbsSqlStmtHolder):
@@ -18,7 +17,7 @@ class ArticleStmts(AbsSqlStmtHolder):
             summary      MEDIUMTEXT   NULL,
             content      MEDIUMBLOB   NULL,
             publish_date DATE         NULL,
-            
+
             CONSTRAINT Article_doi_uindex UNIQUE (doi),
             CONSTRAINT Article_url_uindex UNIQUE (url)
         )
@@ -66,7 +65,6 @@ class ArticleStmts(AbsSqlStmtHolder):
         SELECT id, doi, url, title, venue, summary, publish_date
         FROM post.Article
     """
-
 
     @property
     def select_all_ids_by_author_id(self) -> str: return """

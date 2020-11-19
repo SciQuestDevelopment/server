@@ -1,6 +1,6 @@
 from pymysql import Connection
 
-from database.table.abs_table import AbsTableHandler, AbsSqlStmtHolder
+from .abs_table import AbsTableHandler, AbsSqlStmtHolder
 
 
 class CategoryStmts(AbsSqlStmtHolder):

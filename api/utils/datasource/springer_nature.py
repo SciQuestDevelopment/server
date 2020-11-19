@@ -1,6 +1,7 @@
-import requests
 import json
 from pprint import pprint
+
+import requests
 
 api_key = "d8052a59b5b11e8deb269ce1805fcbae"
 

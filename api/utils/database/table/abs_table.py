@@ -1,6 +1,7 @@
 import abc
-from pymysql import Connection
 from typing import Any
+
+from pymysql import Connection
 
 
 class AbsSqlStmtHolder(object):

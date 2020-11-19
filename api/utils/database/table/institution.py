@@ -1,6 +1,6 @@
 from pymysql import Connection
 
-from database.table.abs_table import AbsTableHandler, AbsSqlStmtHolder
+from .abs_table import AbsSqlStmtHolder, AbsTableHandler
 
 
 class InstitutionStmts(AbsSqlStmtHolder):
@@ -42,5 +42,5 @@ class InstitutionStmts(AbsSqlStmtHolder):
 class InstitutionTable(AbsTableHandler):
 
     def __init__(self, connection: Connection):
-        super().__init__(connection, ArticleStmts())
+        super().__init__(connection, InstitutionStmts())
 
