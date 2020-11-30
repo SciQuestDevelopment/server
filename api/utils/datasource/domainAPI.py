@@ -16,6 +16,9 @@ class domainAPI:
         if self.src is None:
             return []
 
+        if country == "global":
+            return [entry['name'] for entry in self.src]
+
         def filter(entry, item):
             matching = entry['country']
 
@@ -32,4 +35,4 @@ class domainAPI:
 
 if __name__ == '__main__':
     d = domainAPI()
-    pprint(d.query("china"))
+    pprint(d.query("global"))
