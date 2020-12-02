@@ -1,4 +1,6 @@
 import io
+import os
+
 from . import router
 from flask import request, json, send_file
 from ..utils.database.tb_builder import tables
@@ -97,3 +99,9 @@ def get_author_all_publishes():
         rlt_msg = tables.article.select_ids_belong_author(author_id)
         rlt_code = 200
     return json.jsonify(rlt_msg), rlt_code
+
+
+@router.route('/test', methods=['GET'])
+def test_path():
+    return os.path.abspath(os.path.dirname(__file__))
+
