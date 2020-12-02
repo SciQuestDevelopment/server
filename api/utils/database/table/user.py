@@ -1,8 +1,7 @@
+import hashlib
 import logging
-from typing import Dict, Any, List, Optional
 from pymysql import Connection, IntegrityError
 from .abs_table import AbsTableHandler, AbsSqlStmtHolder
-from werkzeug.security import generate_password_hash
 
 
 class UserStmts(AbsSqlStmtHolder):
@@ -74,10 +73,11 @@ class UserTable(AbsTableHandler):
             account_name: str, password: str,
             phone_num: str, email_address: str
     ) -> bool:
+        password_hash = hashlib.sha224(str.encode(password)).hexdigest()
         insrt_stmt = self._stmts_holder.insert_new_user
         insrt_pars = {
             'first_name': first_name, 'second_name': second_name,
-            'account_name': account_name, 'password_hash': hash(password),
+            'account_name': account_name, 'password_hash': password_hash,
             'phone_num': phone_num, 'email_address': email_address
         }
         try:
@@ -94,10 +94,13 @@ class UserTable(AbsTableHandler):
         try:
             cursor = self._db_connection.cursor()
             slct_stmt = self._stmts_holder.select_id
-            slct_pars = {'account_name': account_name, 'password_hash': hash(password)}
+            password_hash = hashlib.sha224(str.encode(password)).hexdigest()
+            slct_pars = {'account_name': account_name, 'password_hash': password_hash}
             print(slct_pars)
             cursor.execute(slct_stmt, slct_pars)
-            user_id = cursor.fetchone().get('id')
+            query_result = cursor.fetchone()
+            if query_result is None or 'id' not in query_result: return False
+            user_id = query_result.get('id')
             updt_stmt = self._stmts_holder.update_login_time
             cursor.execute(updt_stmt, {'user_id': user_id})
             cursor.close()
