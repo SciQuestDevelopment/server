@@ -1,7 +1,9 @@
 import datetime
 import os
 
-from flask import Flask, session
+from flask import Flask
+from flask_cors import CORS
+
 from api import auth, post
 
 app = Flask(__name__)
@@ -13,6 +15,8 @@ app.permanent_session_lifetime = datetime.timedelta(minutes=30)
 app.register_blueprint(auth.router, url_prefix='/auth')
 # Blueprint to the apis for CRUD post related data
 app.register_blueprint(post.router, url_prefix='/post')
+
+CORS(app, supports_credentials=True)
 
 
 if __name__ == '__main__':
