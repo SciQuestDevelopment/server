@@ -1,6 +1,7 @@
 import io
 import os
 
+from ..utils.datasource.domainAPI import domainAPI
 from . import router
 from flask import request, json, send_file
 from ..utils.database.tb_builder import tables
@@ -101,7 +102,12 @@ def get_author_all_publishes():
     return json.jsonify(rlt_msg), rlt_code
 
 
-@router.route('/test', methods=['GET'])
-def test_path():
-    return os.path.abspath(os.path.dirname(__file__))
-
+@router.route('/univ', methods=['GET'])
+def get_univ_name():
+    d = domainAPI()
+    if 'country' not in request.args:
+        rlt_msg = d.query('global')
+    else:
+        country = request.args.get('country')
+        rlt_msg = d.query(country)
+    return json.jsonify(rlt_msg), 200

@@ -1,6 +1,6 @@
+import os
 import json
 from pprint import pprint
-
 
 # class for searching universities in diff countries
 # use query($country) to find the result
@@ -8,7 +8,8 @@ class domainAPI:
     def __init__(self):
         # Load the source
         self.src = None
-        with open('./world_universities_and_domains.json') as src_file:
+        abs_path = os.path.abspath(os.path.dirname(__file__))
+        with open(abs_path + '/world_universities_and_domains.json') as src_file:
             self.src = json.load(src_file)
 
     # it returns a list including names of all universities in that country
