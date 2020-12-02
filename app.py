@@ -16,8 +16,7 @@ app.register_blueprint(auth.router, url_prefix='/auth')
 # Blueprint to the apis for CRUD post related data
 app.register_blueprint(post.router, url_prefix='/post')
 
-CORS(app, supports_credentials=True)
-
+CORS(app, resources=r'/*')
 
 if __name__ == '__main__':
     app.run()

@@ -1,5 +1,7 @@
 import hashlib
 import logging
+from typing import Optional
+
 from pymysql import Connection, IntegrityError
 from .abs_table import AbsTableHandler, AbsSqlStmtHolder
 
@@ -90,7 +92,7 @@ class UserTable(AbsTableHandler):
             logging.debug(exc)
             return False
 
-    def login(self, account_name: str, password: str) -> bool:
+    def login_and_get_id(self, account_name: str, password: str) -> Optional[int]:
         try:
             cursor = self._db_connection.cursor()
             slct_stmt = self._stmts_holder.select_id
@@ -99,12 +101,12 @@ class UserTable(AbsTableHandler):
             print(slct_pars)
             cursor.execute(slct_stmt, slct_pars)
             query_result = cursor.fetchone()
-            if query_result is None or 'id' not in query_result: return False
+            if query_result is None or 'id' not in query_result: return None
             user_id = query_result.get('id')
             updt_stmt = self._stmts_holder.update_login_time
             cursor.execute(updt_stmt, {'user_id': user_id})
             cursor.close()
-            return True
+            return user_id
         except IntegrityError as exc:
             logging.debug(exc)
-            return False
+            return None
