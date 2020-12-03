@@ -7,7 +7,7 @@ from ..utils.datasource.domainAPI import domainAPI
 from . import router
 from flask import request, json, send_file
 from ..utils.database.tb_builder import tables
-
+from ..utils.datasource.springer_nature import springer
 
 
 @router.route('/', methods=['GET'])
@@ -19,6 +19,8 @@ def get_all_apis():
         'Content of an article': 'GET /content?id=:post_id',
         'Meta of an author': 'GET /author/meta?id=:author_id',
         'Meta of all articles from an author': 'GET /author/all_publishes?id=:author_id',
+        'All university name': 'GET /univ',
+        'All university name in one country': 'GET /univ?country=:country_name',
     })
 
 
@@ -113,3 +115,11 @@ def get_univ_name():
         country = request.args.get('country')
         rlt_msg = d.query(country)
     return json.jsonify(rlt_msg), 200
+
+@router.route('/query', methods=['GET'])
+def query_doc():
+    rlt_msg = request.args
+    api = springer('meta')
+    result = api.query(dict(rlt_msg))
+    print(result)
+    return json.jsonify(result), 200
