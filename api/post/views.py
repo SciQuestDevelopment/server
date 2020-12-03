@@ -1,6 +1,8 @@
 import io
 import os
 
+from flask_cors import cross_origin
+
 from ..utils.datasource.domainAPI import domainAPI
 from . import router
 from flask import request, json, send_file
