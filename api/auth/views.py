@@ -54,7 +54,7 @@ def login():
     user_id = tables.user.login_and_get_id(account, password)
     is_success = user_id is not None
     if is_success:
-        session['username'] = account
+        session['user_id'] = user_id
         # activate session usage
         session.permanent = True
     rlt_msg = {'is_success': f'{is_success}'}
