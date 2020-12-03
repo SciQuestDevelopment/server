@@ -24,6 +24,7 @@ CORS(app, supports_credentials=True)
 def after(resp):
     resp = make_response(resp)
     resp.headers['Access-Control-Allow-Origin'] = 'http://localhost:3001'
+    resp.headers['Access-Control-Allow-Credentials'] = 'true'
     resp.headers['Access-Control-Allow-Methods'] = 'GET,POST'
     resp.headers['Access-Control-Allow-Headers'] = 'x-requested-with,content-type'
     return resp
