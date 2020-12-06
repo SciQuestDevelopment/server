@@ -1,0 +1,32 @@
+
+from . import router
+from flask import request, json, send_file
+from ..utils.datasource.springer_nature import springer
+from ..utils.datasource.elsevier import elsevier
+
+
+@router.route('/', methods=['GET'])
+def get_all_apis():
+    return json.jsonify({
+        'springer': 'GET /springer?{param..}',
+        'elsevier': 'GET /elsevier?{param..}',
+    })
+
+
+
+@router.route('/springer', methods=['GET'])
+def query_springer():
+    rlt_msg = request.args
+    api = springer('meta')
+    result = api.query(dict(rlt_msg))
+    # print(result)
+    return json.jsonify(result), 200
+
+@router.route('/elsevier', methods=['GET'])
+def query_elsevier():
+    rlt_msg = request.args
+    api = elsevier('scopus')
+
+    result = api.query(dict(rlt_msg))
+    # print(result)
+    return json.jsonify(result), 200
