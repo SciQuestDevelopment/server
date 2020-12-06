@@ -9,7 +9,9 @@ from ..utils.datasource.elsevier import elsevier
 def get_all_apis():
     return json.jsonify({
         'springer': 'GET /springer?{param..}',
+        'springer_params info': 'https://dev.springernature.com/adding-constraints',
         'elsevier': 'GET /elsevier?{param..}',
+        'elsevier_params info': 'https://dev.elsevier.com/sc_search_tips.html',
     })
 
 
