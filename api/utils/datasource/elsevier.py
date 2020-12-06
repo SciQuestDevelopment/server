@@ -13,7 +13,9 @@ class elsevier:
 
 
     '''
-        query_type: author/scopus/affiliation...
+        :query_type author/scopus/affiliation...
+        :param
+            https://dev.elsevier.com/sc_search_tips.html
     '''
 
     def query(self, params):
