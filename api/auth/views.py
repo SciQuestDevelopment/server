@@ -1,4 +1,4 @@
-from typing import Tuple
+from typing import Tuple, Optional
 
 from flask import json, request, session
 
@@ -21,8 +21,8 @@ def get_all_apis():
     })
 
 
-def __boolean_error_response_body() -> Tuple:
-    rlt_msg = {'is_success': False}
+def __error_response(details: Optional[str]) -> Tuple:
+    rlt_msg = {'is_success': False, 'details': details}
     rlt_code = 400
     return json.jsonify(rlt_msg), rlt_code
 
@@ -31,7 +31,11 @@ def __boolean_error_response_body() -> Tuple:
 def register():
     data = request.form.to_dict()
     if data is None: data = request.json
-    if data is None: return __boolean_error_response_body()
+    if data is None: return __error_response('ERROR: BOTH FORM AND RAW BODY IS EMPTY.')
+    expect_par_names = {'account', 'password', 'first_name', 'second_name', 'phone_num', 'email_address'}
+    actual_par_names = set(data.keys())
+    needed_par_names = expect_par_names - actual_par_names
+    if len(needed_par_names) == 0: return __error_response(f'ERROR: \n\tNEEDED: {needed_par_names}\n\tACTUAL: {data}')
     account = data.get('account')
     password = data.get('password')
     first_name = data.get('first_name')
@@ -48,14 +52,17 @@ def register():
 def login():
     data = request.form.to_dict()
     if data is None: data = request.json
-    if data is None: return __boolean_error_response_body()
+    if data is None: return __error_response('ERROR: BOTH FORM AND RAW BODY IS EMPTY.')
+    expect_par_names = {'account', 'password'}
+    actual_par_names = set(data.keys())
+    needed_par_names = expect_par_names - actual_par_names
+    if len(needed_par_names) == 0: return __error_response(f'ERROR: \n\tNEEDED: {needed_par_names}\n\tACTUAL: {data}')
     account = data.get('account')
     password = data.get('password')
     user_id = tables.user.login_and_get_id(account, password)
     is_success = user_id is not None
     if is_success:
         session['user_id'] = user_id
-        # activate session usage
         session.permanent = True
     rlt_msg = {'is_success': f'{is_success}'}
     rlt_code = 200
