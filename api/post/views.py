@@ -1,8 +1,4 @@
 import io
-import os
-
-from flask_cors import cross_origin
-
 from ..utils.datasource.domainAPI import domainAPI
 from . import router
 from flask import request, json, send_file
@@ -115,6 +111,7 @@ def get_univ_name():
         country = request.args.get('country')
         rlt_msg = d.query(country)
     return json.jsonify(rlt_msg), 200
+
 
 @router.route('/query', methods=['GET'])
 def query_doc():
