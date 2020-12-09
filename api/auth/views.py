@@ -35,7 +35,7 @@ def register():
     expect_par_names = {'account', 'password', 'first_name', 'second_name', 'phone_num', 'email_address'}
     actual_par_names = set(data.keys())
     needed_par_names = expect_par_names - actual_par_names
-    if len(needed_par_names) == 0: return __error_response(f'ERROR: \n\tNEEDED: {needed_par_names}\n\tACTUAL: {data}')
+    if len(needed_par_names) != 0: return __error_response(f'ERROR: \n\tNEEDED: {needed_par_names}\n\tACTUAL: {data}')
     account = data.get('account')
     password = data.get('password')
     first_name = data.get('first_name')
@@ -56,7 +56,7 @@ def login():
     expect_par_names = {'account', 'password'}
     actual_par_names = set(data.keys())
     needed_par_names = expect_par_names - actual_par_names
-    if len(needed_par_names) == 0: return __error_response(f'ERROR: \n\tNEEDED: {needed_par_names}\n\tACTUAL: {data}')
+    if len(needed_par_names) != 0: return __error_response(f'ERROR: \n\tNEEDED: {needed_par_names}\n\tACTUAL: {data}')
     account = data.get('account')
     password = data.get('password')
     user_id = tables.user.login_and_get_id(account, password)
