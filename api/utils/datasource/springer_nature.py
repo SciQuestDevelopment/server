@@ -34,7 +34,15 @@ class springer:
         )
         resp = requests.get(url=self.base, params=payload)
         print(resp.url)
-        return json.dumps(resp.json())
+        resp_json = resp.json()['records'][0]
+        res = dict(abstract = resp_json['abstract'],
+                    creators = resp_json['creators'],
+                    doi = resp_json['doi'],
+                    isbn = resp_json['isbn'],
+                    date = resp_json['publicationDate'],
+                    title = resp_json['title'],
+                    publisher = resp_json['publisher'])
+        return json.dumps(res)
 
 
 if __name__ == '__main__':

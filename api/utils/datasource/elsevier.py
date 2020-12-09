@@ -31,7 +31,7 @@ class elsevier:
 if __name__ == '__main__':
     s = elsevier('scopus')
     params = dict(
-        # doi='10.1021/es052595+'
-        all='gene'
+        doi='10.1021/es052595+'
+        # all='gene'
     )
     pprint(s.query(params))
