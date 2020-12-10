@@ -29,19 +29,18 @@ def __error_response(details: Optional[str]) -> Tuple:
 
 @router.route('/register', methods=['POST'])
 def register():
-    data = request.form.to_dict()
-    if data is None: data = request.json
-    if data is None: return __error_response('ERROR: BOTH FORM AND RAW BODY IS EMPTY.')
+    form_data = request.form.to_dict()
+    if form_data is None: return __error_response(f'ERROR: EMPTY FORM IN REQUEST {request}')
     expect_par_names = {'account', 'password', 'first_name', 'second_name', 'phone_num', 'email_address'}
-    actual_par_names = set(data.keys())
+    actual_par_names = set(form_data.keys())
     needed_par_names = expect_par_names - actual_par_names
-    if len(needed_par_names) != 0: return __error_response(f'ERROR: NEEDED {needed_par_names}. ACTUAL {data}')
-    account = data.get('account')
-    password = data.get('password')
-    first_name = data.get('first_name')
-    second_name = data.get('second_name')
-    phone_num = data.get('phone_num')
-    email_address = data.get('email_address')
+    if len(needed_par_names) != 0: return __error_response(f'ERROR: NEEDED {needed_par_names}. ACTUAL {form_data}')
+    account = form_data.get('account')
+    password = form_data.get('password')
+    first_name = form_data.get('first_name')
+    second_name = form_data.get('second_name')
+    phone_num = form_data.get('phone_num')
+    email_address = form_data.get('email_address')
     is_success = tables.user.register(first_name, second_name, account, password, phone_num, email_address)
     rlt_msg = {'is_success': f'{is_success}'}
     rlt_code = 200
@@ -50,15 +49,14 @@ def register():
 
 @router.route('/login', methods=['POST'])
 def login():
-    data = request.form.to_dict()
-    if data is None: data = request.json
-    if data is None: return __error_response('ERROR: BOTH FORM AND RAW BODY IS EMPTY.')
+    form_data = request.form.to_dict()
+    if form_data is None: return __error_response(f'ERROR: EMPTY FORM IN REQUEST {request}')
     expect_par_names = {'account', 'password'}
-    actual_par_names = set(data.keys())
+    actual_par_names = set(form_data.keys())
     needed_par_names = expect_par_names - actual_par_names
-    if len(needed_par_names) != 0: return __error_response(f'ERROR: \n\tNEEDED: {needed_par_names}\n\tACTUAL: {data}')
-    account = data.get('account')
-    password = data.get('password')
+    if len(needed_par_names) != 0: return __error_response(f'ERROR: NEEDED {needed_par_names} ACTUAL {form_data}')
+    account = form_data.get('account')
+    password = form_data.get('password')
     user_id = tables.user.login_and_get_id(account, password)
     is_success = user_id is not None
     if is_success:
