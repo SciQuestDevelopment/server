@@ -37,11 +37,11 @@ def __get_data_from_both_json_and_form() -> Optional[Dict]:
 @router.route('/register', methods=['POST'])
 def register():
     data = __get_data_from_both_json_and_form()
-    if data is None or len(data) == 0: return __error_response(f'ERROR: EMPTY FORM IN REQUEST {request}')
+    if data is None or len(data) == 0: return __error_response(f'ARGS: EMPTY FORM IN REQUEST {request}')
     expect_par_names = {'account', 'password', 'first_name', 'second_name', 'phone_num', 'email_address'}
     actual_par_names = set(data.keys())
     needed_par_names = expect_par_names - actual_par_names
-    if len(needed_par_names) != 0: return __error_response(f'ERROR: NEEDED {needed_par_names}. ACTUAL {data}')
+    if len(needed_par_names) != 0: return __error_response(f'ARGS: NEEDED {needed_par_names}. ACTUAL {data}')
     account = str(data.get('account'))
     password = str(data.get('password'))
     first_name = str(data.get('first_name'))
@@ -57,12 +57,11 @@ def register():
 @router.route('/login', methods=['POST'])
 def login():
     data = __get_data_from_both_json_and_form()
-    print(f'\n\n\n\n{data}\n\n\n\n\n')
-    if data is None or len(data) == 0: return __error_response(f'ERROR: EMPTY FORM IN REQUEST {request}')
+    if data is None or len(data) == 0: return __error_response(f'ARGS: EMPTY FORM IN REQUEST {request}')
     expect_par_names = {'account', 'password'}
     actual_par_names = set(data.keys())
     needed_par_names = expect_par_names - actual_par_names
-    if len(needed_par_names) != 0: return __error_response(f'ERROR: NEEDED {needed_par_names} ACTUAL {data}')
+    if len(needed_par_names) != 0: return __error_response(f'ARGS: NEEDED {needed_par_names} ACTUAL {data}')
     account = str(data.get('account'))
     password = str(data.get('password'))
     user_id = tables.user.login_and_get_id(account, password)
@@ -73,4 +72,13 @@ def login():
     rlt_msg = {'is_success': f'{is_success}'}
     rlt_code = 200
     return json.jsonify(rlt_msg), rlt_code
+
+
+@router.route('/meta', methods=['GET'])
+def meta():
+    user_id = session.get('user_id')
+    if user_id is None: return __error_response('STATUS: EXPECT LOGIN STATE')
+    meta_data = tables.user.get_meta(user_id)
+    if meta_data is None: return __error_response('VALUE: USER_ID IS INCORRECT')
+    return json.jsonify(meta_data), 200
 

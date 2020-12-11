@@ -1,6 +1,6 @@
 import hashlib
 import logging
-from typing import Optional
+from typing import Optional, Tuple
 
 from pymysql import Connection, IntegrityError
 from .abs_table import AbsTableHandler, AbsSqlStmtHolder
@@ -53,6 +53,12 @@ class UserStmts(AbsSqlStmtHolder):
     """
 
     @property
+    def select_user_info_by_id(self) -> str: return """
+        SELECT * FROM main.User
+        WHERE id = %(user_id)s
+    """
+
+    @property
     def update_login_time(self) -> str: return """
         UPDATE main.User SET last_login_time = CURRENT_TIMESTAMP
         WHERE id = %(user_id)s
@@ -98,7 +104,6 @@ class UserTable(AbsTableHandler):
             slct_stmt = self._stmts_holder.select_id
             password_hash = hashlib.sha224(str.encode(password)).hexdigest()
             slct_pars = {'account_name': account_name, 'password_hash': password_hash}
-            print(slct_pars)
             cursor.execute(slct_stmt, slct_pars)
             query_result = cursor.fetchone()
             if query_result is None or 'id' not in query_result: return None
@@ -110,3 +115,11 @@ class UserTable(AbsTableHandler):
         except IntegrityError as exc:
             logging.debug(exc)
             return None
+
+    def get_meta(self, user_id) -> Optional[Tuple[str, str]]:
+        with self._db_connection.cursor() as cursor:
+            slct_stmt = self._stmts_holder.select_user_info_by_id
+            cursor.execute(slct_stmt, {'user_id': user_id})
+            query_result = cursor.fetchone()
+            if query_result is None: return None
+        return query_result
