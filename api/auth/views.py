@@ -80,5 +80,7 @@ def meta():
     if user_id is None: return __error_response('STATUS: EXPECT LOGIN STATE')
     meta_data = tables.user.get_meta(user_id)
     if meta_data is None: return __error_response('VALUE: USER_ID IS INCORRECT')
-    return json.jsonify(meta_data), 200
+    rlt_msg = {'is_success': True, 'meta_data': meta_data}
+    rlt_code = 200
+    return json.jsonify(rlt_msg), rlt_code
 
