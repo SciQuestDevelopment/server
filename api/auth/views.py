@@ -1,15 +1,20 @@
 from typing import Tuple, Optional, Dict
 
-from flask import json, request, session
+from flask import json, request, session, Response
 
 from . import router
 
 from ..utils.database.tb_builder import tables
 
 
+def __json_response_body(message, status: int) -> Response:
+    json_str = json.dumps(message)
+    return Response(json_str, status=status, mimetype='application/json')
+
+
 @router.route('/', methods=['GET'])
 def get_all_apis():
-    return json.jsonify({
+    return __json_response_body({
         "Register": {
             "Method": "GET",
             "Subpath": "/register"
@@ -18,13 +23,12 @@ def get_all_apis():
             "Method": "GET",
             "Subpath": "/login"
         }
-    })
+    }, 200)
 
 
 def __error_response(details: Optional[str]) -> Tuple:
     rlt_msg = {'is_success': False, 'details': details}
-    rlt_code = 400
-    return json.jsonify(rlt_msg), rlt_code
+    return __json_response_body(rlt_msg, 400)
 
 
 def __get_data_from_both_json_and_form() -> Optional[Dict]:
@@ -51,7 +55,7 @@ def register():
     is_success = tables.user.register(first_name, second_name, account, password, phone_num, email_address)
     rlt_msg = {'is_success': f'{is_success}'}
     rlt_code = 200
-    return json.jsonify(rlt_msg), rlt_code
+    return __json_response_body(rlt_msg, rlt_code), rlt_code
 
 
 @router.route('/login', methods=['POST'])
@@ -70,8 +74,7 @@ def login():
         session['user_id'] = user_id
         session.permanent = True
     rlt_msg = {'is_success': f'{is_success}'}
-    rlt_code = 200
-    return json.jsonify(rlt_msg), rlt_code
+    return __json_response_body(rlt_msg, 200)
 
 
 @router.route('/meta', methods=['GET'])
@@ -81,6 +84,5 @@ def meta():
     meta_data = tables.user.get_meta(user_id)
     if meta_data is None: return __error_response('VALUE: USER_ID IS INCORRECT')
     rlt_msg = {'is_success': True, 'meta_data': meta_data}
-    rlt_code = 200
-    return json.jsonify(rlt_msg), rlt_code
+    return __json_response_body(rlt_msg, 200)
 
