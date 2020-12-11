@@ -30,24 +30,18 @@ class springer:
     def query(self, params):
         payload = dict(
             q=" ".join([f"{constraint}:{value}" for (constraint, value) in params.items()]),
+            p=100,
             api_key=api_key
         )
         resp = requests.get(url=self.base, params=payload)
         print(resp.url)
-        resp_json = resp.json()['records'][0]
-        res = dict(abstract = resp_json['abstract'],
-                    creators = resp_json['creators'],
-                    doi = resp_json['doi'],
-                    isbn = resp_json['isbn'],
-                    date = resp_json['publicationDate'],
-                    title = resp_json['title'],
-                    publisher = resp_json['publisher'])
-        return json.dumps(res)
+        res = resp.json()['records']
+        return res
 
 
 if __name__ == '__main__':
-    s = springer("meta")
+    s = springer("openaccess")
     params = dict(
-        doi='10.1007/978-3-319-07410-8_4'
+        keyword='cnn'
     )
     pprint(s.query(params))
