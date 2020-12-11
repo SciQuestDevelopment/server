@@ -17,7 +17,7 @@ def get_all_apis():
 @router.route('/springer', methods=['GET'])
 def query_springer():
     rlt_msg = request.args
-    api = springer('meta')
+    api = springer('metadata')
     result = api.query(dict(rlt_msg))
     return json.jsonify(result), 200
 
