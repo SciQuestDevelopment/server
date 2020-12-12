@@ -83,7 +83,7 @@ def login():
 def logout():
     user_id = session.get('user_id')
     if user_id is None: return __error_response('STATUS: EXPECT LOGIN STATE')
-    session.pop('user_id', None)
+    session['user_id'] = None
     rlt_msg = {'is_success': True}
     return __json_response_body(rlt_msg, 200)
 
@@ -91,7 +91,7 @@ def logout():
 @router.route('/meta', methods=['GET'])
 def meta():
     user_id = session.get('user_id')
-    if user_id is None: return __error_response('STATUS: EXPECT LOGIN STATE')
+    if user_id is None: return __error_response(f'STATUS: EXPECT LOGIN STATE BUT SESSESION IS {session}')
     meta_data = tables.user.get_meta(user_id)
     if meta_data is None: return __error_response('VALUE: USER_ID IS INCORRECT')
     rlt_msg = {'is_success': True, 'meta_data': meta_data}
