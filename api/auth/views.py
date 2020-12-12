@@ -77,6 +77,15 @@ def login():
     return __json_response_body(rlt_msg, 200)
 
 
+@router.route('/login', methods=['POST'])
+def logout():
+    user_id = session.get('user_id')
+    if user_id is None: return __error_response('STATUS: EXPECT LOGIN STATE')
+    session['user_id'] = None
+    rlt_msg = {'is_success': True}
+    return __json_response_body(rlt_msg, 200)
+
+
 @router.route('/meta', methods=['GET'])
 def meta():
     user_id = session.get('user_id')
