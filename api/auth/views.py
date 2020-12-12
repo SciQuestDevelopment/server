@@ -55,6 +55,7 @@ def register():
     is_success = tables.user.register(first_name, second_name, account, password, phone_num, email_address)
     rlt_msg = {'is_success': f'{is_success}'}
     rlt_code = 200
+    tables.user.flash()
     return __json_response_body(rlt_msg, rlt_code), rlt_code
 
 
@@ -74,6 +75,7 @@ def login():
         session['user_id'] = user_id
         session.permanent = True
     rlt_msg = {'is_success': f'{is_success}'}
+    tables.user.flash()
     return __json_response_body(rlt_msg, 200)
 
 
@@ -81,7 +83,7 @@ def login():
 def logout():
     user_id = session.get('user_id')
     if user_id is None: return __error_response('STATUS: EXPECT LOGIN STATE')
-    session['user_id'] = None
+    session.pop('user_id', None)
     rlt_msg = {'is_success': True}
     return __json_response_body(rlt_msg, 200)
 
@@ -93,5 +95,6 @@ def meta():
     meta_data = tables.user.get_meta(user_id)
     if meta_data is None: return __error_response('VALUE: USER_ID IS INCORRECT')
     rlt_msg = {'is_success': True, 'meta_data': meta_data}
+    tables.user.flash()
     return __json_response_body(rlt_msg, 200)
 

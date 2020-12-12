@@ -37,6 +37,8 @@ def get_post_meta():
         rlt_msg = tables.article.select_meta(post_id)
         rlt_msg['authors_list'] = tables.author.select_ids_of_article(post_id)
         rlt_code = 200
+    tables.author.flash()
+    tables.article.flash()
     return __json_response_body(rlt_msg, rlt_code)
 
 
@@ -58,6 +60,8 @@ def get_multi_articles_meta():
     except TypeError as e:
         rlt_msg = {'TYPE': 'SYNTAX', 'MSG': 'INVALID QUERY_NUM'}
         rlt_code = 400
+    tables.author.flash()
+    tables.article.flash()
     return __json_response_body(rlt_msg, rlt_code)
 
 
@@ -68,6 +72,8 @@ def get_all_articles_meta():
     for each_article in main_metas:
         each_article['authors_list'] = tables.author.select_ids_from_author(each_article['id'])
         rlt_msg.append(each_article)
+    tables.author.flash()
+    tables.article.flash()
     return __json_response_body(rlt_msg)
 
 
@@ -77,6 +83,7 @@ def get_post_content():
         return 'WARNING: INVALID SYNTAX (NO ARGUMENT ID)', 400
     post_id = request.args.get('id')
     binary_content = tables.article.select_content(post_id)
+    tables.article.flash()
     return send_file(
         io.BytesIO(binary_content),
         mimetype='text/plain',
@@ -94,6 +101,7 @@ def get_author_meta():
         author_id = request.args.get('id')
         rlt_msg = tables.author.select_author_meta(author_id)
         rlt_code = 200
+    tables.author.flash()
     return __json_response_body(rlt_msg, rlt_code)
 
 
@@ -106,6 +114,7 @@ def get_author_all_publishes():
         author_id = request.args.get('id')
         rlt_msg = tables.article.select_ids_belong_author(author_id)
         rlt_code = 200
+    tables.article.flash()
     return __json_response_body(rlt_msg, rlt_code)
 
 

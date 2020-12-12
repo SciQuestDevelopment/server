@@ -33,4 +33,3 @@ class AbsTableHandler(object):
 
     def flash(self) -> Any:
         return self.__db_connection.commit()
-
