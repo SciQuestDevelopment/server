@@ -77,7 +77,7 @@ def login():
     return __json_response_body(rlt_msg, 200)
 
 
-@router.route('/login', methods=['POST'])
+@router.route('/logout', methods=['GET'])
 def logout():
     user_id = session.get('user_id')
     if user_id is None: return __error_response('STATUS: EXPECT LOGIN STATE')
