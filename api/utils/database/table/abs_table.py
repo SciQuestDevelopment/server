@@ -28,6 +28,7 @@ class AbsTableHandler(object):
 
     @property
     def _db_connection(self) -> Connection:
+        self.__db_connection.ping(reconnect=True)
         return self.__db_connection
 
     def flash(self) -> Any:
